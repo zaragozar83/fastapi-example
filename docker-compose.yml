@@ -1,0 +1,29 @@
+version: '2.1'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - kafka_merge_net
+  kafka:
+    image: wurstmeister/kafka:latest
+    ports:
+      - "9092:9092"
+    networks:
+      - kafka_merge_net
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+  fast-app:
+    build:
+      context: .
+    image: fast-api
+    ports:
+      - "8000:8000"
+    networks:
+      - kafka_merge_net
+
+networks:
+  kafka_merge_net:
+    driver: bridge
